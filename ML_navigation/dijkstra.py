@@ -49,6 +49,9 @@ Notes:
       obstacle.
     - The AGV's movement is animated using matplotlib's FuncAnimation.
     - The AGV is assumed to initially face 'upward' for orientation-aware movement generation.
+
+Author: Tim Riekeles
+Date: 2025-06-05
 """
 
 import argparse
@@ -217,7 +220,7 @@ class Navigation:
         [
             [0, 0, 0, 0, 0],
             [1, 1, 0, 1, 0],
-            [0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0],
             [0, 1, 0, 0, 0],
         ]
     )
@@ -232,57 +235,30 @@ class Navigation:
     #         [0, 0, 0, 0, 0, 0, 0],
     #     ]
     # )
-    map_grid = np.array(
-        [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0],
-            [0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
-            [1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-            [0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1],
-            [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
-            [1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0],
-            [0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
-            [0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ]
-    )
+    # map_grid = np.array(
+    #     [
+    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0],
+    #         [0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    #         [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+    #         [1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    #         [0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1],
+    #         [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    #         [1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
+    #         [0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     ]
+    # )
     # map_grid = np.load("ML_navigation/map_creation/bw_array.npy")
     map_grid = np.load("ML_navigation/map_creation/map_grid.npy")
     # map_grid = np.load("map_creation/map_grid.npy")
 
-    # map_grid = np.array(    
-    #     [
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     ]
-    # )
     CARDINAL_NEIGHBOURS = [(0, 1), (0, -1), (1, 0), (-1, 0)]  ## Up, Down, Left, Right
     DIAGONAL_NEIGHBOURS = [
         (0, 1),
@@ -347,9 +323,7 @@ class Navigation:
             )
 
         ## run normal Dijkstra and return path if path was found
-        # path_result = self.run_dijkstra(start, goal, agv_size, diagonal)
         path_result = self.run_dijkstra(start, agv_size, diagonal)
-        # path_result = self.run_dijkstra_no(start, goal)
         if path_result:
             return path_result
 
@@ -415,10 +389,10 @@ class Navigation:
                 break
 
             
-            ## explore neighbors
+            ## explore neighbours
             for dy, dx in directions:
                 ny, nx = y + dy, x + dx
-                neighbor = (ny, nx)
+                neighbour = (ny, nx)
                 
                 # #check if move is valid (bounds, obstacles, AGV size)
                 if self.is_valid_move(agv_size, y, x, dy, dx, first_iteration=False):
@@ -427,9 +401,9 @@ class Navigation:
                     move_cost = math.sqrt(dy**2 + dx**2)
                     new_cost = current_cost + move_cost
                     
-                    ## if neighbor not visited or found cheaper path
-                    if neighbor not in visited or new_cost < visited[neighbor][0]:
-                        visited[neighbor] = (new_cost, current_node)
+                    ## if neighbour not visited or found cheaper path
+                    if neighbour not in visited or new_cost < visited[neighbour][0]:
+                        visited[neighbour] = (new_cost, current_node)
                         heapq.heappush(heap, (new_cost, ny, nx))
         
         ## reconstruct path if goal was reached
@@ -457,7 +431,7 @@ class Navigation:
         """
 
         ## target postions of next move
-        target_x, target_y = x + dx, y + dy
+        target_y, target_x = x + dx, y + dy
 
         ## precompute blocked positions (excluding goal)
         blocked_positions = {
@@ -467,13 +441,13 @@ class Navigation:
         }
 
         ## 1. check that obstacle is not outside of bounds
-        if not (0 <= target_x < len(self.grid) and 0 <= target_y < len(self.grid[0])):
+        if not (0 <= target_y < len(self.grid) and 0 <= target_x < len(self.grid[0])):
             return False
 
         ## 2. check for blocks in the way (unless it's the target)
         if (target_y, target_x) in blocked_positions:
             return False
-
+        
         ## 3. additional check for diagonal moves - look at the "corner" between current and target
         if dx != 0 and dy != 0:  ## if it is a diagonal move
             if (x + dx, y) in blocked_positions or (x, y + dy) in blocked_positions:
@@ -510,21 +484,20 @@ class Navigation:
                 return offsets
 
         ## 4. add safety radius -> enables making the agv bigger
-        if self.grid[target_x][target_y] == 0:
+        if self.grid[target_y][target_x] == 0:
             ## check for obstacles in the vicinity
             for i, j in get_iteration_offsets(radius, first_iteration):
-                check_x, check_y = target_x + i, target_y + j
-                # print(check_x,check_y)
+                check_y, check_x = target_y + i, target_x + j
 
                 ## check if new location is outside if bounds
                 if not (
-                    0 <= check_x < len(self.grid) and 0 <= check_y < len(self.grid[0])
+                    0 <= check_y < len(self.grid) and 0 <= check_x < len(self.grid[0])
                 ):
                     return False
 
                 ## if within bounds check for obstacle presence
                 else:
-                    if self.grid[check_x][check_y] == 1:  ## obstacle detected
+                    if self.grid[check_y][check_x] == 1:  ## obstacle detected
                         return False
 
             return True  ## no obstacles found in vicinity
@@ -547,7 +520,8 @@ class Navigation:
         
         while current != start:
             path.append(current)
-            current = visited[current][1]  # Get predecessor
+            ## get predecessor
+            current = visited[current][1]
         
         path.append(start)
         path.reverse()
@@ -617,7 +591,7 @@ class AGV:
         agv_img = ax.imshow(
             agv_image_resized, extent=(start[1], start[1] + 0.0001, start[0] + 0.0001, start[0]),
         )
-        plt.show()
+        # plt.show()
         ## create smooth path using interpolation
         smoothed_path = self.smooth_path(path, steps=10)
 
@@ -625,16 +599,16 @@ class AGV:
         interval = 50
 
         ## start agv animation
-        # self.agv_animation(
-        #     ax,
-        #     fig,
-        #     smoothed_path,
-        #     agv_img,
-        #     interval,
-        #     start_time,
-        #     warehouse_dimensions,
-        #     radius,
-        # )
+        self.agv_animation(
+            ax,
+            fig,
+            smoothed_path,
+            agv_img,
+            interval,
+            start_time,
+            warehouse_dimensions,
+            radius,
+        )
 
     def agv_animation(
         self,
@@ -793,7 +767,7 @@ class AGV:
             update,
             frames=int(len(smoothed_path) / step),
             interval=1,
-            blit=True,
+            blit=False,
             ## blit=False, when showing animation in pop up window
             ## blit=True, speeds pop up window up, when showing animation in saved version
             init_func=lambda: (agv_img, velocity_text, eta_text),
@@ -812,7 +786,7 @@ class AGV:
         ## save the animation
         try:
             ani.save(
-                "ML_navigation/animations/agv_animation_astar_search.mp4",
+                "ML_navigation/animations/dijkstra_animation_astar_search.mp4",
                 writer="ffmpeg",
                 fps=30,  # Lower FPS reduces file size & encoding time
                 dpi=100,  # Lower DPI speeds up rendering
@@ -826,7 +800,7 @@ class AGV:
                     "+faststart",  # Optimize for web streaming
                 ],
             )
-            print("Dijkstra animation saved as agv_animation_astar_search.mp4")
+            print("Dijkstra animation saved as dijkstra_animation_astar_search.mp4")
             time_a2 = time.time()
             print(f"Time taken to save and show animation: {time_a2 - time_a1}s")
         except Exception as e:
@@ -969,11 +943,19 @@ class AGV:
                     ax.add_patch(plt.Rectangle((j, i), 1, 1, color="black"))
 
         ## add labels and title
-        # plt.title("Exploration Heatmap of Dijkstra Search")
+        plt.title("Exploration Heatmap of Dijkstra Search")
         plt.xlabel("X Coordinate")
         plt.ylabel("Y Coordinate")
 
-        ## show the heatmap
+        ## get the current figure object
+        fig = ax.get_figure()
+
+        ## show the heatmap until "ESC" is pressed
+        def on_key(event):
+            if event.key == "escape":
+                plt.close(fig)
+
+        fig.canvas.mpl_connect("key_press_event", on_key)
         plt.show()
 
     def get_movement_sequence(
@@ -1297,13 +1279,12 @@ def main():
     agv_size = math.ceil(
         min(nav.map_grid.shape[0], nav.map_grid.shape[1]) * args.agv_size
     )
-    print(agv_size)
 
     ## execute Dijkstra search to find optimal path to the goal
     ## "diagonal = True" allows for diagonal movements
     ## "diagonal = False" only moves cardinally
     x = 0
-    for _ in range(3):
+    for _ in range(5):
         time_s = time.time()
         try:
             path, exploration_counts = nav.dijkstra_search(
@@ -1317,7 +1298,7 @@ def main():
         time_e = time.time()
         print(f"Time taken for Dijkstra to find optimal path: {time_e - time_s:.9f}s")
         x += time_e - time_s
-    print(f"average time: {x/3}")
+    print(f"average time: {x/5}")
     ## plot and animate AGV path, get agv exploration heatmap and get movement sequence for LEGO
     ## AGV
     if path:

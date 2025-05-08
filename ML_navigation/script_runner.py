@@ -15,7 +15,7 @@ def run_script():
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
-            encoding="utf-8",  # ✅ Fix encoding issue
+            encoding="utf-8",
             bufsize=1
         )
 

@@ -1,5 +1,6 @@
 colour,location_x,location_y
-start,1.0,1.0
-red,99.0,99.0
+start,0.0,0.0
+red,60.0,55.0
+green,1.0,100.0
 original_width_height,100.0,100.0
 warehouse_dimensions,5000.0,5000.0

@@ -43,6 +43,9 @@ Notes:
     - The AGV's movement is animated using matplotlib's FuncAnimation.
     - The script assumes the AGV starts facing 'upwards' and generates movement commands
         accordingly.
+
+Author: Tim Riekeles
+Date: 2025-06-05
 """
 
 import argparse
@@ -200,7 +203,7 @@ class Navigation:
         [
             [0, 0, 0, 0, 0],
             [1, 1, 0, 1, 0],
-            [0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0],
             [0, 1, 0, 0, 0],
         ]
     )
@@ -215,26 +218,26 @@ class Navigation:
     #         [0, 0, 0, 0, 0, 0, 0],
     #     ]
     # )
-    map_grid = np.array(
-        [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0],
-            [0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
-            [1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-            [0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1],
-            [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
-            [1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0],
-            [0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
-            [0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ]
-    )
+    # map_grid = np.array(
+    #     [
+    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0],
+    #         [0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    #         [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+    #         [1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    #         [0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1],
+    #         [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    #         [1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0],
+    #         [0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
+    #         [0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     ]
+    # )
     # map_grid = np.load("ML_navigation/map_creation/bw_array.npy")
     # map_grid = np.load("ML_navigation/map_creation/map_grid.npy")
     # map_grid = np.load("map_creation/map_grid.npy")
@@ -259,17 +262,6 @@ class Navigation:
         self.non_optimal_paths = []
 
         # ACO parameters
-        # self.num_ants = 2000
-        # self.max_iterations = 1000
-        # self.alpha = 4.0  # Pheromone importance
-        # self.beta = 4.0   # Heuristic importance
-        # self.rho = 0.1    # Evaporation rate
-        # self.delta_t = 3.0      # Pheromone deposit constant
-        # self.pheromone = np.ones_like(self.grid, dtype=float) * 0.1
-        # self.pheromone[self.grid == 1] = 0  # No pheromone on obstacles
-
-        
-        # ACO parameters
         self.num_ants = 100
         self.max_iterations = 20
         self.alpha = 1.0  # Pheromone importance
@@ -278,17 +270,6 @@ class Navigation:
         self.delta_t = 2.0      # Pheromone deposit constant
         self.pheromone = np.ones_like(self.grid, dtype=float) * 0.1
         self.pheromone[self.grid == 1] = 0  # No pheromone on obstacles
-
-        
-        # self.num_ants = 1000
-        # self.max_iterations = 1000
-        # self.alpha = 2.0  # Pheromone importance
-        # self.beta = 2.0   # Heuristic importance
-        # self.rho = 0.2    # Evaporation rate
-        # self.delta_t = 2.0      # Pheromone deposit constant
-        # self.pheromone = np.ones_like(self.grid, dtype=float) * 0.1
-        # self.pheromone[self.grid == 1] = 0  # No pheromone on obstacles
-
 
     @staticmethod
     def heuristic(node, goal):
@@ -320,50 +301,6 @@ class Navigation:
         dy = abs(node[1] - goal[1])
         return max(dx, dy)
     
-    def aco_search_2(self, start, goal, diagonal=False):
-        """
-        Perform Ant Colony Optimization to find the shortest path from start to goal.
-        
-        Args:
-            start (tuple): Start position (y, x).
-            goal (tuple): Goal position (y, x).
-            diagonal (bool): Whether to allow diagonal movement.
-            
-        Returns:
-            list: The shortest path found, or None if no path exists.
-            numpy.ndarray: Exploration heatmap
-        """
-        self.goal = goal
-        best_path = None
-        best_path_length = float('inf')
-        best_path_cost = float('inf')
-        
-        for iteration in range(self.max_iterations):
-            all_paths = []
-            
-            for ant in range(self.num_ants):
-                path, path_cost = self.construct_ant_path(start, diagonal)
-                if path:
-                    path_length = len(path)
-                    all_paths.append((path, path_length))
-                    
-                    if path_length < best_path_length:
-                        best_path = path
-                        best_path_length = path_length
-                        best_path_cost = path_cost
-            
-            self.update_pheromone(all_paths)
-            self.evaporate_pheromone()
-            
-            ## early stopping if path found is not improving
-            if best_path and iteration > 200 and len(set([p[1] for p in all_paths[-50:]])) == 1:
-                break        
-
-        if best_path:
-            print(f"Total cost of ACO path: {best_path_cost}")
-            return best_path, self.create_exploration_heatmap_aco()
-        return None
-
     def aco_search(self, start, goal, diagonal=False):
         """
         Perform Ant Colony Optimization to find the shortest path from start to goal.
@@ -416,7 +353,16 @@ class Navigation:
 
     def run_aco(self, start, diagonal):
         """
-        Internal ACO run with agv_size-aware navigation.
+        Execute the main ACO loop to find the best path using multiple ants.
+
+        Tracks the best path found across iterations and updates pheromone trails accordingly.
+
+        Args:
+            start (tuple): Starting node coordinates (y, x).
+            diagonal (bool): Whether diagonal movement is allowed.
+
+        Returns:
+            tuple or None: (Best path as a list of nodes, exploration heatmap) or None if no path found.
         """
         best_path = None
         best_path_length = float('inf')
@@ -450,7 +396,15 @@ class Navigation:
 
     def construct_ant_path(self, start, diagonal):
         """
-        Construct a path for a single ant using pheromone trails.
+        Simulate a single ant's traversal from start to goal based on pheromone and heuristic info.
+
+        Args:
+            start (tuple): Starting node coordinates (y, x).
+            diagonal (bool): Whether diagonal movement is allowed.
+
+        Returns:
+            tuple: (Path taken as a list of (y, x) nodes, total movement cost).
+                    Returns (None, inf) if no path is found (dead-end).
         """
         path = [start]
         current = start
@@ -460,7 +414,7 @@ class Navigation:
         while current != self.goal:
             neighbours = self.get_valid_neighbours(current, diagonal, visited)
             if not neighbours:
-                return None, float('inf')  # Dead end
+                return None, float('inf')   ## dead end
             
             next_node = self.select_next_node(current, neighbours, diagonal)
             if next_node is None:
@@ -480,7 +434,18 @@ class Navigation:
 
     def get_valid_neighbours(self, node, diagonal, visited):
         """
-        Get valid neighbouring nodes that can be moved to.
+        Identify all valid neighbouring nodes from the current position.
+
+        Considers grid bounds, obstacles, previously visited nodes, and optionally allows diagonal movement.
+        Also respects special blocked positions (e.g., LEGO blocks) except for the goal.
+
+        Args:
+            node (tuple): Current node coordinates (y, x).
+            diagonal (bool): Whether diagonal movement is allowed.
+            visited (set): Set of already visited nodes.
+
+        Returns:
+            list: Valid (y, x) neighbouring node positions.
         """
         neighbours = []
         x, y = node
@@ -526,7 +491,17 @@ class Navigation:
 
     def select_next_node(self, current, neighbours, diagonal):
         """
-        Select the next node based on pheromone and heuristic information.
+        Select the next node for the ant to move to, based on pheromone levels and heuristic estimates.
+
+        Uses a probabilistic approach weighted by pheromone strength and heuristic value.
+
+        Args:
+            current (tuple): Current node coordinates (y, x).
+            neighbours (list): List of candidate next nodes.
+            diagonal (bool): Whether diagonal movement is allowed.
+
+        Returns:
+            tuple or None: Selected next node (y, x), or None if no move is possible.
         """
         if not neighbours:
             return None
@@ -553,7 +528,12 @@ class Navigation:
 
     def update_pheromone(self, paths):
         """
-        Update pheromone trails based on ant paths.
+        Update pheromone levels on the grid based on all successful ant paths.
+
+        Stronger pheromone is deposited on shorter paths to reinforce their desirability.
+
+        Args:
+            paths (list): List of tuples (path, cost), where each path is a list of (y, x) and cost is its length.
         """
         for path, cost in paths:
             if not path or cost == 0 or cost == float('inf'):
@@ -566,17 +546,25 @@ class Navigation:
 
     def evaporate_pheromone(self):
         """
-        Evaporate pheromone trails.
+        Apply evaporation to all pheromone values on the grid.
+
+        Prevents excessive accumulation of pheromone and helps avoid premature convergence.
         """
         self.pheromone *= (1 - self.rho)
         self.pheromone[self.pheromone < 0.1] = 0.1  # Minimum pheromone level
 
     def create_exploration_heatmap_aco(self):
         """
-        Create exploration heatmap based on pheromone trails.
+        Generate a heatmap representing pheromone concentration across the grid.
+
+        Obstacles are masked as -1 to visually separate them in the output.
+
+        Returns:
+            numpy.ndarray: 2D array of pheromone levels with -1s at obstacle locations.
         """
         heatmap = self.pheromone.copy()
-        heatmap[self.grid == 1] = np.nan   ## Mark obstacles as not an number
+        ## mark obstacles as -1
+        heatmap[self.grid == 1] = -1
         return heatmap
 
 
@@ -602,14 +590,10 @@ class AGV:
             self.navigation.grid, dtype=int
         )  ## 2D array
         self.last_velocity = 0.01
+        self.object = None
 
     def animate_agv(
-        self,
-        grid: np.ndarray,
-        path: List[Tuple[int, int]],
-        block_locations: Dict[str, Tuple[int, int]],
-        start: Tuple[int, int],
-        warehouse_dimensions: Tuple[int, int],
+        self, grid, path, block_locations, start, warehouse_dimensions, object
     ):
         """
         Animate the AGV following the calculated path using matplotlib.
@@ -624,11 +608,12 @@ class AGV:
         ## start timer before animation begins
         start_time = time.time()
 
+        self.object = object
+
         ## plot grid, obstacles, LEGO blocks and AStar path
         ax, fig = self.plot_map(grid, start, block_locations, path)
 
         ax.set_aspect('equal', adjustable='box')
-        plt.show()
         ## load AGV image
         agv_image = mpimg.imread("ML_navigation/LEGO_agv.png")
         agv_img = ax.imshow(
@@ -642,7 +627,7 @@ class AGV:
         interval = 50
 
         ## start agv animation
-        # self.agv_animation(ax, fig, smoothed_path, agv_img, interval, start_time, warehouse_dimensions)
+        self.agv_animation(ax, fig, smoothed_path, agv_img, interval, start_time, warehouse_dimensions)
 
     def agv_animation(self, ax, fig, smoothed_path, agv_img, interval, start_time, warehouse_dimensions):
         """
@@ -684,6 +669,10 @@ class AGV:
         
         ## initialize tqdm progress bar
         progress_bar = tqdm(total=len(smoothed_path), desc="AGV Animation Progress", unit="frame")
+
+        ## animation flag
+        global animation_done
+        animation_done = False
 
         def update(frame):
             """
@@ -751,17 +740,25 @@ class AGV:
                 
 
             ## check if the AGV has reached the goal (last frame of the animation)
-            if actual_frame == len(smoothed_path) - 1:
-                print("Simulated AGV has reached the target block!")
-                plt.close(fig)
-                velocity_text.set_text(f"Vel: 0 m/s")
-                eta_text.set_text(f"ETA: 0 sec")
-                ## close progress bar
+            if actual_frame >= len(smoothed_path) - 2 * step:
+
+                ## ensure progress bar is 100% completed
+                progress_bar.n = progress_bar.total
+                progress_bar.refresh()
                 progress_bar.close()
 
-                ## update the start position in the CSV file to the current (y, x) position
-                new_start = (int(y), int(x))
-                # Database().update_start_position(new_start)
+                ## ensuring text is only printed once, as this is called again, when animation
+                ## is saved
+                global animation_done
+                if not animation_done:
+                    print(f"Simultated AGV has reached the target {self.object}!")
+                    print("Press Escape (ESC) to stop animation.")
+
+                animation_done = True
+
+                ## ensure text display correct end results
+                velocity_text.set_text("Vel: 0 m/s")
+                eta_text.set_text("ETA: 0 sec")
                 
             ## return the updated AGV image, velocity text, and ETA text for rendering
             return agv_img, velocity_text, eta_text
@@ -780,19 +777,38 @@ class AGV:
         fig.canvas.mpl_connect('key_press_event', on_key)
         plt.show()
 
-        # ax.legend(loc="best", labelspacing=0.5)
-        
-        ## save the animation before showing it
+        ax.legend(loc="best", labelspacing=0.5)
+
+        ## display animation until "ESC" is pressed
+        def on_key(event):
+            if event.key == "escape":
+                plt.close(fig)
+
+        fig.canvas.mpl_connect("key_press_event", on_key)
+        plt.show()
+
+        ## save the animation
         try:
-            ani.save('ML_navigation/animations/agv_animation_aco.mp4', writer='ffmpeg', fps=1000/interval, 
-                    dpi=300, bitrate=1800)
-            print("ACO animation saved as agv_animation_aco.mp4")
+            ani.save(
+                "ML_navigation/animations/aco_animation_astar_search.mp4",
+                writer="ffmpeg",
+                fps=30,  # Lower FPS reduces file size & encoding time
+                dpi=100,  # Lower DPI speeds up rendering
+                bitrate=1000,  # Lower bitrate = faster encoding
+                extra_args=[
+                    "-preset",
+                    "ultrafast",  # Fastest encoding (lower quality)
+                    "-crf",
+                    "28",  # Higher CRF = faster but slightly worse quality
+                    "-movflags",
+                    "+faststart",  # Optimize for web streaming
+                ],
+            )
+            print("Dijkstra animation saved as aco_animation_astar_search.mp4")
+            time_a2 = time.time()
+            print(f"Time taken to save and show animation: {time_a2 - time_a1}s")
         except Exception as e:
             print(f"Could not save animation: {e}")
-
-
-        time_a2 = time.time()
-        print(f"Time taken to save and show animation: {time_a2 - time_a1}s")
 
 
         # ## save animation as a temporary GIF
@@ -1175,6 +1191,12 @@ def main():
         default="green",
         help="Target colour AGV navigates to. Defaults to 'green'",
     )
+    parser.add_argument(
+        "--target_object",
+        type=str,
+        default="block",
+        help="Target object AGV navigates to. Defaults to 'block'",
+    )
 
     args = parser.parse_args()
 
@@ -1205,12 +1227,12 @@ def main():
     ## plot and animate AGV path, get agv exploration heatmap and get movement sequence for LEGO
     ## AGV
     if path:
+        agv.plot_exploration_heatmap(exploration_counts)
         agv.animate_agv(
             nav.map_grid, path, map_instance.block_locations, map_instance.start,
-            map_instance.warehouse_dimensions
+            map_instance.warehouse_dimensions, args.target_object,
         )
 
-        # agv.plot_exploration_heatmap(exploration_counts)
 
         agv.get_movement_sequence(path, initial_start_position, args.agv_orientation)
     else:

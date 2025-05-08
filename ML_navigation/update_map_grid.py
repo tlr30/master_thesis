@@ -1,3 +1,23 @@
+"""
+Upgrade Map grid and restart AGV Navigation
+
+This script is called when an obstacle has been detected during the LEGO AGV navigation.
+It is used to update the detected obstalce in the map, calculate the new start postion
+and restart the pathfinding process using A*.
+
+Command Line Arguments:
+    --movement (str): Movement sequence (default is 'move_straight right_turn move_straight').
+    --interrupt_index (int): The movement step where interruption occurs (default is 0).
+    --start (str): Starting position of the AGV (default is '(0, 0)').
+    --target_colour (str): Colour of the target AGV is navigating to.
+
+Usage:
+    python movement_obstacle_detection.py --movement 'move_straight right_turn move_straight' 
+    --interrupt_index 2 --start '(0, 0)' --target_colour 'red'
+
+Author: Tim Riekeles
+Date: 2025-06-05    
+"""
 import argparse
 import numpy as np
 import ast
@@ -55,10 +75,6 @@ def update_database_and_grid(map_grid):
     ## database grid size defaults to 100 x 100 if not found in CSV
     else:
         database_grid_size = (100, 100)
-
-    ## determine scale factors, so update start in database correctly
-    # row_scale = (map_grid.shape[0] - 1) / (database_grid_size[0] - 1)
-    # col_scale = (map_grid.shape[1] - 1) / (database_grid_size[1] - 1)
 
     ## determine scale factors
     row_scale = map_grid.shape[0] / database_grid_size[0]
