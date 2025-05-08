@@ -1,3 +1,18 @@
+"""
+Enables connection to Open WebUI
+
+A Flask API endpoint that accepts a command via POST request and streams back the output 
+of executing a corresponding Python script (e.g., for voice-controlled AGV systems).
+
+Features:
+- Accepts JSON payload with a 'command' field.
+- Executes `speech/command_execution.py` with the command.
+- Streams stdout in real time to the client.
+
+
+Author: Tim Riekeles
+Date: 2025-08-05
+"""
 from flask import Flask, request, Response, stream_with_context
 import subprocess
 import sys

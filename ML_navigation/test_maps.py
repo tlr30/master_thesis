@@ -1,3 +1,13 @@
+"""
+Prepare navigation grid
+
+Handles map loading, grid generation, data scaling from CSV-based block and start positions, 
+and visualization of the AGV's environment. This module allows mapping of a 2D warehouse layout 
+for LEGO AGV path planning and static grid display with obstacles and colored blocks.
+
+Author: Tim Riekeles
+Date: 2025-08-05
+"""
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
