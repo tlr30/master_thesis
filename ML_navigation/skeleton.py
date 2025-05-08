@@ -1,10 +1,37 @@
+"""
+Generate custom Pybricks file
+
+This script dynamically generates and executes a Pybricks-compatible Python script for controlling a LEGO AGV 
+(Autonomous Guided Vehicle) based on a sequence of movement commands. It also monitors real-time output 
+from the robot to detect goals or obstacles and updates the environment accordingly.
+
+Main Features:
+- Generates movement logic for Pybricks.
+- Runs the generated script on the LEGO AGV over BLE.
+- Logs movement progress and handles interruptions due to obstacles.
+- Triggers an update of the environment state if navigation is interrupted.
+
+Dependencies:
+- pybricksdev
+- argparse
+- subprocess
+- re
+
+Author: Tim Riekeles
+Date: 2025-08-05
+"""
 import argparse
 import subprocess
 import re
-# Define the skeleton script
 def generate_pybricks_script(movement_sequence):
     """
-    Generates a Pybricks script based on the movement sequence.
+    Generates a Pybricks-compatible Python script for executing a given movement sequence on a LEGO AGV.
+
+    Args:
+        movement_sequence (list of str): Sequence of movement function names to execute.
+
+    Returns:
+        str: Full Pybricks script as a string.
     """
     skeleton = """
 from pybricks.hubs import PrimeHub

@@ -1,3 +1,22 @@
+"""
+Detect Navigation commands
+
+This script captures audio input from the microphone, transcribes it using OpenAI's Whisper model, 
+and passes recognized voice commands to an external Python script for execution. It continuously 
+listens in 5-second windows and reacts to spoken commands.
+
+Requirements:
+- whisper
+- pyaudio
+- wave
+- numpy
+- subprocess
+
+Ensure the directory 'speech/audio_files/' exists before running.
+
+Author: Tim Riekeles
+Date: 2025-08-05
+"""
 import whisper
 import pyaudio
 import wave

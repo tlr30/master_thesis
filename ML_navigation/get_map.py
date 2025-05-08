@@ -1,3 +1,20 @@
+"""
+Create map from drawing 
+
+This script provides functionality to convert a hand-drawn or digital image 
+into a binary black-and-white format and downscale it for use in navigation 
+or robotics applications. It includes:
+
+- Conversion to black and white using a threshold
+- Downscaling while preserving essential black pixel information
+- Saving both the processed image and its corresponding NumPy array
+- Command-line interface for easy parameter control
+
+Dependencies: OpenCV (cv2), NumPy, argparse, pathlib, Streamlit (optional), tempfile
+
+Author: Tim Riekeles
+Date: 2025-08-05
+"""
 import cv2
 import numpy as np
 import argparse
@@ -12,11 +29,13 @@ def convert_to_black_white(input_path: str, threshold: int = 128) -> np.ndarray:
 
     Args:
         input_path (str): Path to the input image.
-        output_path (str): Path to save the black-and-white image.
         threshold (int): Threshold value for binary conversion. Defaults to 128.
 
     Returns:
         np.ndarray: The black-and-white image as a NumPy array.
+
+    Raises:
+        FileNotFoundError: If the input image cannot be loaded.
     """
     ## load the image
     image = cv2.imread(input_path)
@@ -119,14 +138,6 @@ def main():
 
     ## save the NumPy array
     np.save(base_dir / "bw_array.npy", bw_array)
-
-    # ## save final image as a temporary file
-    # with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
-    #     cv2.imwrite(temp_file.name, downscaled_bw)
-    #     temp_filename = temp_file.name
-
-    # ## show final processed image
-    # st.image(temp_filename, caption="Final Processed Image", use_column_width=True)
 
 
 if __name__ == "__main__":
