@@ -3,7 +3,9 @@ Create map from drawing
 
 This script provides functionality to convert a hand-drawn or digital image 
 into a binary black-and-white format and downscale it for use in navigation 
-or robotics applications. It includes:
+or robotics applications. 
+Depending on the pens thickness args.threshold needs to be varied.
+It includes:
 
 - Conversion to black and white using a threshold
 - Downscaling while preserving essential black pixel information
@@ -19,8 +21,6 @@ import cv2
 import numpy as np
 import argparse
 from pathlib import Path
-import streamlit as st
-import tempfile
 
 
 def convert_to_black_white(input_path: str, threshold: int = 128) -> np.ndarray:
@@ -51,7 +51,7 @@ def convert_to_black_white(input_path: str, threshold: int = 128) -> np.ndarray:
     return bw_image
 
 
-def downscale_preserve_black(bw_image: np.ndarray, scale_percent: float) -> np.ndarray:
+def downscale_preserve_black(bw_image: np.ndarray, scale_percent: float, threshold) -> np.ndarray:
     """
     Downscale a binary image while preserving black pixels.
 
@@ -75,9 +75,8 @@ def downscale_preserve_black(bw_image: np.ndarray, scale_percent: float) -> np.n
     downscaled_image = cv2.resize(bw_image, new_size, interpolation=cv2.INTER_AREA)
 
     ## ensure the final image is strictly black & white
-    # _, downscaled_bw = cv2.threshold(downscaled_image, 128, 255, cv2.THRESH_BINARY)
-    _, downscaled_bw = cv2.threshold(downscaled_image, 250, 255, cv2.THRESH_BINARY)
-    # _, downscaled_bw = cv2.threshold(downscaled_image, 245, 255, cv2.THRESH_BINARY)
+    threshold = 250
+    _, downscaled_bw = cv2.threshold(downscaled_image, threshold, 255, cv2.THRESH_BINARY)
 
     return downscaled_bw, bw_image.shape
 
@@ -100,6 +99,12 @@ def main():
         default="warehouse",
         help="Drawing of the desired map. Defaults to 'warehouse.jpg'.",
     )
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=250.0,
+        help="Threshold when converting drawing into 0s and 1s Defaults to 250.",
+    )
     args = parser.parse_args()
 
     ## define file paths
@@ -116,7 +121,7 @@ def main():
 
     ## downscale the black and white image while preserving black pixels
     try:
-        downscaled_bw, original_shape = downscale_preserve_black(bw_image, args.dimension_percentage)
+        downscaled_bw, original_shape = downscale_preserve_black(bw_image, args.dimension_percentage, args.threshold)
     except Exception as e:
         print(f"Error downscaling image: {e}")
         return
@@ -137,7 +142,7 @@ def main():
     print(message)
 
     ## save the NumPy array
-    np.save(base_dir / "bw_array.npy", bw_array)
+    np.save(base_dir / "map_grid.npy", bw_array)
 
 
 if __name__ == "__main__":

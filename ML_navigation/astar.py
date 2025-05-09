@@ -212,48 +212,16 @@ class Navigation:
     """
 
     ## define grid-based map (0 = free space, 1 = obstacle)
-    map_grid = np.array(
-        [
-            [0, 0, 0, 0, 0],
-            [1, 1, 0, 1, 0],
-            [0, 0, 0, 0, 0],
-            [0, 1, 0, 0, 0],
-        ]
-    )
+    ## example grid
     # map_grid = np.array(
     #     [
-    #         [0, 0, 0, 0, 0, 0, 0],
-    #         [1, 1, 1, 0, 0, 1, 0],
-    #         [0, 0, 1, 0, 0, 1, 0],
-    #         [0, 0, 1, 0, 0, 0, 0],
-    #         [0, 1, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 1, 1, 1, 1],
-    #         [0, 0, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0],
+    #         [1, 1, 0, 1, 0],
+    #         [0, 0, 0, 0, 0],
+    #         [0, 1, 0, 0, 0],
     #     ]
     # )
-    # map_grid = np.array(
-    #     [
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0],
-    #         [0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    #         [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
-    #         [1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    #         [0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1],
-    #         [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
-    #         [1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
-    #         [0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     ]
-    # )
-    # map_grid = np.load("ML_navigation/map_creation/bw_array.npy")
     map_grid = np.load("ML_navigation/map_creation/map_grid.npy")
-    # map_grid = np.load("map_creation/map_grid.npy")
     
     CARDINAL_NEIGHBOURS = [(0, 1), (0, -1), (1, 0), (-1, 0)]  ## Up, Down, Left, Right
     DIAGONAL_NEIGHBOURS = [
@@ -1343,22 +1311,19 @@ def main():
     ## execute A Star search to find optimal path to the goal
     ## "diagonal = True" allows for diagonal movements
     ## "diagonal = False" only moves cardinally
-    x = 0
-    for _ in range(5):
-        time_s = time.time()
-        try:
-            path, exploration_counts = nav.a_star_search(
-                map_instance.start, goal, int(agv_size), diagonal=args.diagonal
-            )
+    time_s = time.time()
+    try:
+        path, exploration_counts = nav.a_star_search(
+            map_instance.start, goal, int(agv_size), diagonal=args.diagonal
+        )
 
-        except ValueError as e:
-            print(f"Navigation Error: {e}")
-            return
+    except ValueError as e:
+        print(f"Navigation Error: {e}")
+        return
+    
+    time_e = time.time()
+    print(f"Time taken for A Star to find optimal path: {time_e - time_s:.20f} s")
         
-        time_e = time.time()
-        print(f"Time taken for A Star to find optimal path: {time_e - time_s:.20f} s")
-        x += time_e - time_s
-    print(f"average time: {x/5}")
     ## plot and animate AGV path, get agv exploration heatmap and get movement sequence for LEGO
     ## AGV
     if path:

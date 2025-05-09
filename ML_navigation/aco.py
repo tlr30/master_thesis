@@ -199,48 +199,16 @@ class Navigation:
     """
 
     ## define grid-based map (0 = free space, 1 = obstacle)
-    map_grid = np.array(
-        [
-            [0, 0, 0, 0, 0],
-            [1, 1, 0, 1, 0],
-            [0, 0, 0, 0, 0],
-            [0, 1, 0, 0, 0],
-        ]
-    )
+    ## example grid
     # map_grid = np.array(
     #     [
-    #         [0, 0, 0, 0, 0, 0, 0],
-    #         [1, 1, 1, 0, 0, 1, 0],
-    #         [0, 0, 1, 0, 0, 1, 0],
-    #         [0, 0, 1, 0, 0, 0, 0],
-    #         [0, 1, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 1, 1, 1, 1],
-    #         [0, 0, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0],
+    #         [1, 1, 0, 1, 0],
+    #         [0, 0, 0, 0, 0],
+    #         [0, 1, 0, 0, 0],
     #     ]
     # )
-    # map_grid = np.array(
-    #     [
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0],
-    #         [0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    #         [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
-    #         [1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    #         [0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1],
-    #         [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
-    #         [1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0],
-    #         [0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
-    #         [0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     ]
-    # )
-    # map_grid = np.load("ML_navigation/map_creation/bw_array.npy")
-    # map_grid = np.load("ML_navigation/map_creation/map_grid.npy")
-    # map_grid = np.load("map_creation/map_grid.npy")
+    map_grid = np.load("ML_navigation/map_creation/map_grid.npy")
 
     CARDINAL_NEIGHBOURS = [(0, 1), (0, -1), (1, 0), (-1, 0)]  ## Up, Down, Left, Right
     DIAGONAL_NEIGHBOURS = [
@@ -613,13 +581,13 @@ class AGV:
         ## plot grid, obstacles, LEGO blocks and AStar path
         ax, fig = self.plot_map(grid, start, block_locations, path)
 
+        plt.show()
         ax.set_aspect('equal', adjustable='box')
         ## load AGV image
         agv_image = mpimg.imread("ML_navigation/LEGO_agv.png")
         agv_img = ax.imshow(
             agv_image, extent=(start[1], start[1] + 1, start[0] + 1, start[0])
         )
-
         ## create smooth path using interpolation
         smoothed_path = self.smooth_path(path, steps = 10)
 
