@@ -4,3 +4,4 @@ matplotlib
 openai-whisper
 pyaudio
 flask
+pybricksdev
