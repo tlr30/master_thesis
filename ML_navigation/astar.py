@@ -325,7 +325,7 @@ class Navigation:
         fallback_result = self.run_a_star(start, goal, 1, diagonal)
         if fallback_result is not None:
             raise ValueError(
-                f"The AGV size ({agv_size}) is too large for the current map layout. Try reducing"
+                f"The AGV size ({agv_size}) is too large for the current map layout. Try reducing "
                     "it."
             )
 
@@ -415,8 +415,7 @@ class Navigation:
 
                     ## penalise turns to avoid unnecessary turns
                     if (previous_dx, previous_dy) != (dx, dy):
-                        tentative_g_score += 0.0
-                        # tentative_g_score += 0.5
+                        tentative_g_score += 0.5
 
                     ## if neighbour is already evaluated, skip
                     if neighbour in closed_set:
@@ -581,7 +580,7 @@ class AGV:
         self.object = None
 
     def animate_agv(
-        self, grid, path, block_locations, start, warehouse_dimensions, object, radius
+        self, grid, path, block_locations, start, warehouse_dimensions, object, radius, fig, ax
     ):
         """
         Animate the AGV following the computed path using matplotlib.
@@ -601,7 +600,7 @@ class AGV:
         self.object = object
 
         ## plot grid, obstacles, LEGO blocks and AStar path
-        ax, fig = self.plot_map(grid, start, block_locations, path, radius)
+        self.plot_map(grid, start, block_locations, path, radius, fig, ax)
         ax.set_aspect("equal", adjustable="box")
 
         ## load AGV image
@@ -834,7 +833,7 @@ class AGV:
         except Exception as e:
             print(f"Could not save animation: {e}")
 
-    def plot_map(self, grid, start, block_locations, path, radius):
+    def plot_map(self, grid, start, block_locations, path, radius, fig, ax):
         """
         Visualize the grid, blocks, start position, and path.
 
@@ -848,9 +847,6 @@ class AGV:
         Returns:
             tuple: (Axes, Figure), The plot's axes and figure object.
         """
-        ## create subplot, maintaining full grid visibility
-        fig, ax = plt.subplots(figsize=(7, 7))
-
         ## create new grid full of obstacles and then paste the actual grid inside to add obstacle
         ## boundary
         new_grid = np.ones((grid.shape[0] + 2, grid.shape[1] + 2), dtype=int)
@@ -903,8 +899,6 @@ class AGV:
                 zorder=1,
             )
 
-        return ax, fig
-
     def smooth_path(self, path, steps):
         """
         Create interpolated path points for smooth animation. Needed for animation so that AGV also
@@ -938,7 +932,7 @@ class AGV:
 
         return smooth_path
 
-    def plot_exploration_heatmap(self, exploration_counts):
+    def plot_exploration_heatmap(self, exploration_counts, ax):
         """
         Plot a heatmap of the exploration counts during A* search.
 
@@ -946,8 +940,6 @@ class AGV:
             exploration_counts (numpy.ndarray): A 2D array containing the number of times each cell
             was explored.
         """
-        plt.figure(figsize=(10, 7))
-
         ## create a copy of the exploration data
         heatmap_data = exploration_counts.copy()
 
@@ -975,16 +967,6 @@ class AGV:
         plt.xlabel("X Coordinate")
         plt.ylabel("Y Coordinate")
 
-        ## get the current figure object
-        fig = ax.get_figure()
-
-        ## show the heatmap until "ESC" is pressed
-        def on_key(event):
-            if event.key == "escape":
-                plt.close(fig)
-
-        fig.canvas.mpl_connect("key_press_event", on_key)
-        plt.show()
 
     def get_movement_sequence(
         self, path, initial_start_position, selected_colour, agv_orientation
@@ -1176,6 +1158,8 @@ class AGV:
                 str(initial_start_position),
                 "--target_colour",
                 selected_colour,
+                "--agv_orientation",
+                agv_orientation,
             ]
         )
 
@@ -1287,7 +1271,7 @@ def main():
     )
     parser.add_argument(
         "--agv_size",
-        default=0.00001,
+        default=0.02,
         help="Size of AGV in map scenario. Defaults to 2% of the map size.",
     )
 
@@ -1323,11 +1307,18 @@ def main():
     
     time_e = time.time()
     print(f"Time taken for A Star to find optimal path: {time_e - time_s:.20f} s")
-        
+    
+    ## set up a figure with 2 subplots (left and right)
+    fig, (ax_left, ax_right) = plt.subplots(1, 2, figsize=(14, 7), constrained_layout=True)
+
+    ## Set the same aspect ratio for both subplots
+    ax_left.set_aspect("equal", adjustable="box")
+    ax_right.set_aspect("equal", adjustable="box")
+
     ## plot and animate AGV path, get agv exploration heatmap and get movement sequence for LEGO
     ## AGV
     if path:
-        agv.plot_exploration_heatmap(exploration_counts)
+        agv.plot_exploration_heatmap(exploration_counts, ax_right)
         agv.animate_agv(
             nav.map_grid,
             path,
@@ -1336,8 +1327,9 @@ def main():
             map_instance.warehouse_dimensions,
             args.target_object,
             agv_size,
+            fig,
+            ax_left,
         )
-
 
         agv.get_movement_sequence(
             path, initial_start_position, selected_colour, args.agv_orientation

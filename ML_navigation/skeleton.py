@@ -20,9 +20,13 @@ Dependencies:
 Author: Tim Riekeles
 Date: 2025-08-05
 """
+
 import argparse
 import subprocess
 import re
+import config
+
+
 def generate_pybricks_script(movement_sequence):
     """
     Generates a Pybricks-compatible Python script for executing a given movement sequence on a LEGO AGV.
@@ -34,7 +38,6 @@ def generate_pybricks_script(movement_sequence):
         str: Full Pybricks script as a string.
     """
     skeleton = """
-from pybricks.hubs import PrimeHub
 from pybricks.pupdevices import Motor, ColorSensor, UltrasonicSensor
 from pybricks.parameters import Port
 from pybricks.tools import wait
@@ -163,14 +166,32 @@ movements = [
     script += f"        break\n"
     script += f"    movement()\n"
     script += f"print(f'MOVEMENT_PROGRESS: Movement index: {{idx}}, Total: {{len(movements) - 1}}')\n"
-    
+
     return script
 
-parser = argparse.ArgumentParser(description="Generate a Pybricks script based on a movement sequence.")
-parser.add_argument("--movement", type=str, default='move_straight right_turn move_straight', help="Movement sequence as a space-separated string. Defaults to 'move_straight right_turn move_straight'.")
-parser.add_argument("--start", type=str, default='(0, 0)', help="Start for movement sequence. Defaults to '(0, 0)'.")
-parser.add_argument("--target_colour", type=str, help="Target colour AGV navigates to.")
 
+parser = argparse.ArgumentParser(
+    description="Generate a Pybricks script based on a movement sequence."
+)
+parser.add_argument(
+    "--movement",
+    type=str,
+    default="move_straight right_turn move_straight",
+    help="Movement sequence as a space-separated string. Defaults to 'move_straight right_turn move_straight'.",
+)
+parser.add_argument(
+    "--start",
+    type=str,
+    default="(0, 0)",
+    help="Start for movement sequence. Defaults to '(0, 0)'.",
+)
+parser.add_argument("--target_colour", type=str, help="Target colour AGV navigates to.")
+parser.add_argument(
+    "--agv_orientation",
+    type=str,
+    default="up",
+    help="AGV orientation. Defaults to 'up'.",
+)
 ## parse the arguments
 args = parser.parse_args()
 
@@ -186,19 +207,21 @@ with open("ML_navigation/pybricks/lego_navigation.py", "w") as f:
 
 print("Script generated successfully!")
 print("LEGO AGV navigation starts.")
-command = ["pybricksdev", "run", "ble", "--name", "FYP", "ML_navigation/pybricks/lego_navigation.py"]
-# subprocess.run(command, check=True)
-process = subprocess.Popen(
-    command,
-    stdout=subprocess.PIPE,
-    text=True,
-    bufsize = 1
-)
+command = [
+    "pybricksdev",
+    "run",
+    "ble",
+    "--name",
+    config.lego_hub_name,
+    "ML_navigation/pybricks/lego_navigation.py",
+]
+
+process = subprocess.Popen(command, stdout=subprocess.PIPE, text=True, bufsize=1)
 
 ## save lines printed from sensor_motor.py to log.txt file
 with open("ML_navigation/pybricks/log.txt", "w") as file:
 
-    for line in iter(process.stdout.readline, ''):
+    for line in iter(process.stdout.readline, ""):
 
         ## show live output
         print(line.strip())
@@ -223,23 +246,34 @@ with open("ML_navigation/pybricks/log.txt", "r") as log_file:
     ## obstacle detected
     obstacle_message = "Obstacle detected"
     obstacle_detected = any(goal_message in line for line in lines)
-    
+
     # Output the result
     if not goal_reached:
         print("Goal has not been reached")
         for line in lines:
             if "Movement index:" in line:
-                
+
                 match = re.search(r"Movement index: (\d+)", line)
                 if match:
                     # Return the extracted number as an integer
-                    movement_index =  int(match.group(1))
+                    movement_index = int(match.group(1))
                     break
 
-
-        subprocess.run(["python", "ML_navigation/update_map_grid.py", "--movement", args.movement,
-                        "--interrupt_index", str(movement_index),
-                        "--start", args.start,
-                        "--target_colour", args.target_colour])
+        subprocess.run(
+            [
+                "python",
+                "ML_navigation/update_map_grid.py",
+                "--movement",
+                args.movement,
+                "--interrupt_index",
+                str(movement_index),
+                "--start",
+                args.start,
+                "--target_colour",
+                args.target_colour,
+                "--agv_orientation",
+                args.agv_orientation,
+            ]
+        )
     else:
         print("LEGO AGV arrived at destination.")

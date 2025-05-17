@@ -1,6 +1,8 @@
-numpy
-pandas
-matplotlib
-openai-whisper
-pyaudio
-flask
+numpy==1.26.4
+pandas==2.2.3
+matplotlib==3.9.2
+openai-whisper==20240930
+pyaudio==0.2.14
+flask==3.1.0
+pybricksdev==1.0.0
+opencv-contrib-python==4.11.0.86
